@@ -1,8 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.TaskDTO;
 import com.example.demo.entity.Task;
 import com.example.demo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,35 +18,34 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping("/")
-    public List<Task> getAllTasks(){
-        return taskService.findAll();
+    public ResponseEntity<List<TaskDTO>> getAllTasks(){
+        List<TaskDTO> tasks = taskService.findAll();
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @GetMapping("/{taskId}")
-    public Task getTaskById(@PathVariable int taskId){
-        return taskService.findById(taskId);
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable int taskId){
+        TaskDTO task = taskService.findById(taskId);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public String saveTask(@RequestBody Task task){
+    public ResponseEntity<String> saveTask(@RequestBody TaskDTO task){
         task.setId(0);
         taskService.save(task);
-
-        return "saved task";
+        return new ResponseEntity<>("saved task", HttpStatus.CREATED);
     }
 
     @PutMapping("/")
-    public Task updateTask(@RequestBody Task task){
-
-        taskService.save(task);
-        return task;
+    public ResponseEntity<TaskDTO> updateTask(@RequestBody TaskDTO task){
+        taskService.updateTask(task);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @DeleteMapping("/{taskId}")
-    public String deleteTaskById(@PathVariable int taskId){
-        Task task= taskService.findById(taskId);
+    public ResponseEntity<String> deleteTaskById(@PathVariable int taskId){
+        TaskDTO task = taskService.findById(taskId);
         taskService.deleteTask(task);
-
-        return "deleted task with the id - "+ taskId;
+        return new ResponseEntity<>("deleted task with the id - " + taskId, HttpStatus.OK);
     }
 }

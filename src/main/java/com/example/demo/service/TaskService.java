@@ -1,15 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.TaskDTO;
 import com.example.demo.entity.Task;
 
 import java.util.List;
 
 public interface TaskService {
-    List<Task> findAll();
+    List<TaskDTO> findAll();
 
-    Task findById(int taskId);
+    TaskDTO findById(int taskId);
 
-    void save(Task task);
+    void save(TaskDTO task);
 
-    void deleteTask(Task task);
+    void deleteTask(TaskDTO task);
+
+    void updateTask(TaskDTO task);
 }
