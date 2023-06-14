@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.TaskDTO;
-import com.example.demo.entity.Task;
+import org.springframework.scheduling.config.Task;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface TaskService {
 
     TaskDTO findById(int taskId);
 
-    void save(TaskDTO task);
+    TaskDTO createTask(TaskDTO task);
 
     void deleteTask(TaskDTO task);
 

@@ -11,41 +11,72 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/tasks/list")
+@RequestMapping("/tasks")
 public class TaskController {
 
     @Autowired
     private TaskService taskService;
 
     @GetMapping("/")
-    public ResponseEntity<List<TaskDTO>> getAllTasks(){
-        List<TaskDTO> tasks = taskService.findAll();
-        return new ResponseEntity<>(tasks, HttpStatus.OK);
+    public ResponseEntity<List<TaskDTO>> getAllTasks() {
+        try {
+            List<TaskDTO> tasks = taskService.findAll();
+            if (!tasks.isEmpty()) {
+                return new ResponseEntity<>(tasks, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable int taskId){
-        TaskDTO task = taskService.findById(taskId);
-        return new ResponseEntity<>(task, HttpStatus.OK);
+    public ResponseEntity<TaskDTO> getTaskById(@PathVariable int taskId) {
+        try {
+            TaskDTO task = taskService.findById(taskId);
+            if (task != null) {
+                return new ResponseEntity<>(task, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> saveTask(@RequestBody TaskDTO task){
-        task.setId(0);
-        taskService.save(task);
-        return new ResponseEntity<>("saved task", HttpStatus.CREATED);
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO task) {
+        try {
+            TaskDTO savedTask = taskService.createTask(task);
+            return new ResponseEntity<>(savedTask, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/")
-    public ResponseEntity<TaskDTO> updateTask(@RequestBody TaskDTO task){
-        taskService.updateTask(task);
-        return new ResponseEntity<>(task, HttpStatus.OK);
+    public ResponseEntity<TaskDTO> updateTask(@RequestBody TaskDTO task) {
+        try {
+            taskService.updateTask(task);
+            return new ResponseEntity<>(task, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<String> deleteTaskById(@PathVariable int taskId){
-        TaskDTO task = taskService.findById(taskId);
-        taskService.deleteTask(task);
-        return new ResponseEntity<>("deleted task with the id - " + taskId, HttpStatus.OK);
+    public ResponseEntity<TaskDTO> deleteTaskById(@PathVariable int taskId) {
+        try {
+            TaskDTO task = taskService.findById(taskId);
+            if (task != null) {
+                taskService.deleteTask(task);
+                return new ResponseEntity<>(task, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
